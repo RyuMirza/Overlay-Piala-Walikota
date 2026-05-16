@@ -113,25 +113,22 @@
     }
 
     // Check existing state on load to prevent triggering old events
-    try {
-        let saved = localStorage.getItem('pubgm_overlay_state');
-        if (saved) {
-            let state = JSON.parse(saved);
-            if (state.eliminated_trigger) {
+    fetch('http://localhost:3000/api/state')
+        .then(r => r.json())
+        .then(state => {
+            if (state && state.eliminated_trigger) {
                 lastElimTimestamp = state.eliminated_trigger.timestamp;
             }
-        }
-    } catch(e) {}
+        })
+        .catch(e => {});
 
-    // Listen for updates from Dashboard
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'pubgm_overlay_state' && e.newValue) {
-            try {
-                let state = JSON.parse(e.newValue);
-                checkState(state);
-            } catch(e) {}
-        }
-    });
+    // Listen for real-time updates from Server
+    const evtSource = new EventSource("http://localhost:3000/api/stream");
+    evtSource.onmessage = (event) => {
+        try {
+            checkState(JSON.parse(event.data));
+        } catch(e) {}
+    };
 </script>
 </body>
 </html>

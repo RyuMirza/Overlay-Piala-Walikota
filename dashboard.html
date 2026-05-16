@@ -345,48 +345,53 @@
         const dot = document.getElementById('status-dot');
         const text = document.getElementById('status-text');
         
-        try {
-            localStorage.setItem('pubgm_overlay_state', JSON.stringify(state));
-            dot.className = 'status-dot ok';
-            text.textContent = 'Synced ✓';
-            if (mode === 'force') showNotif('✅ Semua nama tim tersimpan!');
-        } catch(e) {
+        fetch('/api/state', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+        }).then(r => {
+            if(r.ok) {
+                dot.className = 'status-dot ok';
+                text.textContent = 'Synced ✓';
+                if (mode === 'force') showNotif('✅ Semua nama tim tersimpan!');
+            }
+        }).catch(e => {
             dot.className = 'status-dot';
-            text.textContent = 'Sync Failed';
-            showNotif('❌ Gagal menyimpan data!', 'danger');
-        }
+            text.textContent = 'Server Offline';
+            showNotif('❌ Gagal terhubung ke server!', 'danger');
+        });
     }
 
     // ---- LOAD STATE ----
     function loadState() {
-        let saved = localStorage.getItem('pubgm_overlay_state');
-        if (saved) {
-            try {
-                let data = JSON.parse(saved);
+        fetch('/api/state')
+            .then(r => r.json())
+            .then(data => {
                 if(data && data.teams && data.teams.length === 20) {
                     state = data;
                 }
-            } catch(e) {}
-        }
-        
-        renderAll();
-        document.getElementById('status-dot').className = 'status-dot ok';
-        document.getElementById('status-text').textContent = 'Connected ✓';
-        saveState(); // Sync on load
+                renderAll();
+                document.getElementById('status-dot').className = 'status-dot ok';
+                document.getElementById('status-text').textContent = 'Connected ✓';
+                saveState(); // Sync on load
+            })
+            .catch(() => {
+                renderAll();
+                saveState();
+            });
     }
 
-    // Sync from other tabs (if user opens multiple dashboard tabs)
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'pubgm_overlay_state' && e.newValue) {
-            try {
-                let data = JSON.parse(e.newValue);
-                if(data && data.teams) {
-                    state = data;
-                    renderAll();
-                }
-            } catch(e) {}
-        }
-    });
+    // Real-time Event Stream dari Server (SSE)
+    const evtSource = new EventSource("/api/stream");
+    evtSource.onmessage = (event) => {
+        try {
+            let data = JSON.parse(event.data);
+            if(data && data.teams) {
+                state = data;
+                renderAll();
+            }
+        } catch(e) {}
+    };
 
     loadState();
 </script>

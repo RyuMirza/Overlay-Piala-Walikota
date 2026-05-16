@@ -200,24 +200,21 @@
     }
 
     // Check existing state on load
-    try {
-        let saved = localStorage.getItem('pubgm_overlay_state');
-        if (saved) {
-            processState(JSON.parse(saved));
-        }
-    } catch(e) {}
+    fetch('http://localhost:3000/api/state')
+        .then(r => r.json())
+        .then(state => processState(state))
+        .catch(e => {});
     
     // Always show ticker
     setTimeout(() => play(), 500);
 
-    // Listen for updates from Dashboard
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'pubgm_overlay_state' && e.newValue) {
-            try {
-                processState(JSON.parse(e.newValue));
-            } catch(e) {}
-        }
-    });
+    // Listen for real-time updates from Server
+    const evtSource = new EventSource("http://localhost:3000/api/stream");
+    evtSource.onmessage = (event) => {
+        try {
+            processState(JSON.parse(event.data));
+        } catch(e) {}
+    };
 </script>
 </body>
 </html>

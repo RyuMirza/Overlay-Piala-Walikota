@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +12,14 @@
             font-family: 'AgencyFB';
             src: url('fonts/agency_fb.ttf') format('truetype');
         }
-        body, html {
-            margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden;
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
             font-family: 'AgencyFB', sans-serif;
             color: white;
             background-color: transparent;
@@ -20,157 +27,293 @@
 
         /* Container & Animations */
         #container {
-            width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
-            opacity: 0; transition: opacity 0.5s ease-in-out;
+            width: 1920px;
+            height: 1080px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
-        #container.show { opacity: 1; }
-        
+
+        #container.show {
+            opacity: 1;
+        }
+
         .sidebar {
-            position: absolute; top: 0; width: 450px; height: 1080px;
-            display: flex; flex-direction: column; align-items: center;
-            background: linear-gradient(180deg, rgba(23,64,144,0.9) 0%, rgba(13,32,77,0.9) 100%);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: absolute;
+            top: 0;
+            width: 450px;
+            height: 1080px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(23, 64, 144, 0.9) 0%, rgba(13, 32, 77, 0.9) 100%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-        #sidebar-left { left: 0; transform: translateX(-450px); border-right: 2px solid rgba(255,255,255,0.1); }
-        #sidebar-right { right: 0; transform: translateX(450px); border-left: 2px solid rgba(255,255,255,0.1); }
-        #container.show #sidebar-left { transform: translateX(0); }
-        #container.show #sidebar-right { transform: translateX(0); }
+
+        #sidebar-left {
+            left: 0;
+            transform: translateX(-450px);
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar-right {
+            right: 0;
+            transform: translateX(450px);
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #container.show #sidebar-left {
+            transform: translateX(0);
+        }
+
+        #container.show #sidebar-right {
+            transform: translateX(0);
+        }
 
         /* Logos and Header (Fixed Height to ensure alignment) */
         .sidebar-header {
-            width: 100%; height: 200px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            width: 100%;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             margin-top: 10px;
         }
 
         .logos {
-            width: 90%; display: flex; justify-content: space-around; align-items: center;
+            width: 90%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
         }
-        .logos img { height: 100px; object-fit: contain; }
-        
+
+        .logos img {
+            height: 100px;
+            object-fit: contain;
+        }
+
         .tournament-info {
-            width: 90%; text-align: center;
+            width: 90%;
+            text-align: center;
         }
+
         .tournament-title {
-            font-size: 65px; font-weight: bold; margin-bottom: 5px;
-            color: #d1e3ff; text-transform: uppercase; line-height: 1; text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            font-size: 65px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #d1e3ff;
+            text-transform: uppercase;
+            line-height: 1;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
             letter-spacing: 2px;
         }
+
         .match-details {
-            display: flex; justify-content: space-between; width: 100%; gap: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
         }
+
         .match-badge {
-            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%); 
-            color: black; font-size: 26px; padding: 2px 10px;
-            font-weight: bold; width: 50%; text-align: center;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
+            color: black;
+            font-size: 26px;
+            padding: 2px 10px;
+            font-weight: bold;
+            width: 50%;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
         }
 
         /* Team List Container - Positioned absolutely inside sidebar for PERFECT ALIGNMENT */
         .team-list {
-            position: absolute; top: 220px; /* Forces both left and right to start at exactly 220px from top */
-            width: 380px; display: flex; flex-direction: column; gap: 20px;
+            position: absolute;
+            top: 220px;
+            /* Forces both left and right to start at exactly 220px from top */
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         /* 3D Card Style for Teams */
         .team-row {
-            display: flex; width: 100%; height: 50px;
-            color: black; align-items: stretch; font-size: 28px; font-weight: bold;
+            display: flex;
+            width: 100%;
+            height: 50px;
+            color: black;
+            align-items: stretch;
+            font-size: 28px;
+            font-weight: bold;
             position: relative;
-            transform: translateY(20px); opacity: 0; transition: all 0.5s ease;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
         }
-        #container.show .team-row { transform: translateY(0); opacity: 1; }
-        
+
+        #container.show .team-row {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         .team-rank {
-            width: 60px; text-align: center; font-size: 26px; display: flex; justify-content: center; align-items: center;
+            width: 60px;
+            text-align: center;
+            font-size: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
-            border: 1px solid #ccc; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 3px 3px 6px rgba(0,0,0,0.4);
-            margin-right: 5px; z-index: 2; position: relative;
+            border: 1px solid #ccc;
+            box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.4);
+            margin-right: 5px;
+            z-index: 2;
+            position: relative;
         }
-        
+
         .team-details {
-            flex-grow: 1; display: flex; align-items: center;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
             background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 100%);
-            border: 1px solid #ccc; box-shadow: inset -2px -2px 5px rgba(0,0,0,0.1), 3px 3px 6px rgba(0,0,0,0.4);
+            border: 1px solid #ccc;
+            box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.1), 3px 3px 6px rgba(0, 0, 0, 0.4);
         }
 
         .team-logo {
-            width: 50px; height: 100%; display: flex; justify-content: center; align-items: center; margin-left: 5px;
+            width: 50px;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 5px;
         }
+
         .team-logo img {
-            max-width: 40px; max-height: 40px; object-fit: contain;
+            max-width: 40px;
+            max-height: 40px;
+            object-fit: contain;
         }
+
         .team-name {
-            flex-grow: 1; padding-left: 10px; text-transform: uppercase; white-space: nowrap; overflow: hidden; letter-spacing: 1px;
+            flex-grow: 1;
+            padding-left: 10px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            letter-spacing: 1px;
         }
-        
+
         /* Status Overlays */
-        .status-dead .team-rank, .status-dead .team-details {
-            background: linear-gradient(180deg, #777 0%, #555 100%); color: #ccc; border-color: #444;
+        .status-dead .team-rank,
+        .status-dead .team-details {
+            background: linear-gradient(180deg, #777 0%, #555 100%);
+            color: #ccc;
+            border-color: #444;
         }
-        .status-missed .team-rank, .status-missed .team-details {
-            background: linear-gradient(180deg, #666 0%, #444 100%); color: #999; border-color: #333; text-decoration: line-through;
+
+        .status-missed .team-rank,
+        .status-missed .team-details {
+            background: linear-gradient(180deg, #666 0%, #444 100%);
+            color: #999;
+            border-color: #333;
+            text-decoration: line-through;
         }
 
         /* Staggered Animations */
-        .team-list .team-row:nth-child(1) { transition-delay: 0.1s; }
-        .team-list .team-row:nth-child(2) { transition-delay: 0.2s; }
-        .team-list .team-row:nth-child(3) { transition-delay: 0.3s; }
-        .team-list .team-row:nth-child(4) { transition-delay: 0.4s; }
-        .team-list .team-row:nth-child(5) { transition-delay: 0.5s; }
-        .team-list .team-row:nth-child(6) { transition-delay: 0.6s; }
-        .team-list .team-row:nth-child(7) { transition-delay: 0.7s; }
-        .team-list .team-row:nth-child(8) { transition-delay: 0.8s; }
-        .team-list .team-row:nth-child(9) { transition-delay: 0.9s; }
-        .team-list .team-row:nth-child(10) { transition-delay: 1.0s; }
+        .team-list .team-row:nth-child(1) {
+            transition-delay: 0.1s;
+        }
 
+        .team-list .team-row:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .team-list .team-row:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .team-list .team-row:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .team-list .team-row:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        .team-list .team-row:nth-child(6) {
+            transition-delay: 0.6s;
+        }
+
+        .team-list .team-row:nth-child(7) {
+            transition-delay: 0.7s;
+        }
+
+        .team-list .team-row:nth-child(8) {
+            transition-delay: 0.8s;
+        }
+
+        .team-list .team-row:nth-child(9) {
+            transition-delay: 0.9s;
+        }
+
+        .team-list .team-row:nth-child(10) {
+            transition-delay: 1.0s;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="container">
-    <!-- LEFT SIDEBAR -->
-    <div id="sidebar-left" class="sidebar">
-        <div class="sidebar-header">
-            <div class="logos">
-                <!-- Using placeholder if you don't have Euroelite logo -->
-                <div style="font-size:45px; font-weight:bold; color:white; text-shadow:2px 2px 5px black;">PUBG MOBILE</div>
-            </div>
-        </div>
-        
-        <div class="team-list" id="left-teams">
-            <!-- Injected by JS -->
-        </div>
-    </div>
-
-    <!-- RIGHT SIDEBAR -->
-    <div id="sidebar-right" class="sidebar">
-        <div class="sidebar-header">
-            <div class="tournament-info">
-                <div class="tournament-title" id="f_tourney_title">DOVE REGIONAL</div>
-                <div class="match-details">
-                    <div class="match-badge" id="f_stage">SEMIFINAL A</div>
-                    <div class="match-badge" id="f_date">16.08.2023</div>
+    <div id="container">
+        <!-- LEFT SIDEBAR -->
+        <div id="sidebar-left" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logos">
+                    <!-- Using placeholder if you don't have Euroelite logo -->
+                    <div style="font-size:45px; font-weight:bold; color:white; text-shadow:2px 2px 5px black;">FREE FIRE
+                        MAKIN HD</div>
                 </div>
             </div>
+
+            <div class="team-list" id="left-teams">
+                <!-- Injected by JS -->
+            </div>
         </div>
 
-        <div class="team-list" id="right-teams">
-            <!-- Injected by JS -->
+        <!-- RIGHT SIDEBAR -->
+        <div id="sidebar-right" class="sidebar">
+            <div class="sidebar-header">
+                <div class="tournament-info">
+                    <div class="tournament-title" id="f_tourney_title">DOVE REGIONAL</div>
+                    <div class="match-details">
+                        <div class="match-badge" id="f_stage">SEMIFINAL A</div>
+                        <div class="match-badge" id="f_date">16.08.2023</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-list" id="right-teams">
+                <!-- Injected by JS -->
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    function generateTeamRows() {
-        const leftList = document.getElementById('left-teams');
-        const rightList = document.getElementById('right-teams');
-        leftList.innerHTML = ''; rightList.innerHTML = '';
+    <script>
+        function generateTeamRows() {
+            const leftList = document.getElementById('left-teams');
+            const rightList = document.getElementById('right-teams');
+            leftList.innerHTML = ''; rightList.innerHTML = '';
 
-        for (let i = 1; i <= 20; i++) {
-            const list = i <= 10 ? leftList : rightList;
-            list.innerHTML += `
+            for (let i = 1; i <= 20; i++) {
+                const list = i <= 10 ? leftList : rightList;
+                list.innerHTML += `
                 <div class="team-row" id="row_${i}">
                     <div class="team-rank">${i}.</div>
                     <div class="team-details">
@@ -179,75 +322,73 @@
                     </div>
                 </div>
             `;
+            }
         }
-    }
 
-    // SPX / CasparCG Integration Protocol
-    function play() { document.getElementById('container').classList.add('show'); }
-    function stop() { document.getElementById('container').classList.remove('show'); }
+        // SPX / CasparCG Integration Protocol
+        function play() { document.getElementById('container').classList.add('show'); }
+        function stop() { document.getElementById('container').classList.remove('show'); }
 
-    function update(str) {
-        try {
-            var data = typeof str === 'string' ? JSON.parse(str) : str;
-            for (var key in data) {
-                var val = data[key];
-                if (val && typeof val === 'object' && val.v !== undefined) { val = val.v; }
-                
-                var el = document.getElementById(key);
-                if (el) {
-                    if (el.tagName === 'IMG') { el.src = val; el.style.display = 'block'; }
-                    else { el.innerHTML = val; }
-                }
+        function update(str) {
+            try {
+                var data = typeof str === 'string' ? JSON.parse(str) : str;
+                for (var key in data) {
+                    var val = data[key];
+                    if (val && typeof val === 'object' && val.v !== undefined) { val = val.v; }
 
-                // Handle Team Status (DEAD / MISSED)
-                if (key.startsWith('f_status_')) {
-                    let num = key.split('_')[2];
-                    let row = document.getElementById(`row_${num}`);
-                    if (row) {
-                        row.classList.remove('status-dead', 'status-missed');
-                        if (val.toUpperCase() === 'DEAD') row.classList.add('status-dead');
-                        if (val.toUpperCase() === 'MISSED' || val.toUpperCase() === 'MISS') row.classList.add('status-missed');
+                    var el = document.getElementById(key);
+                    if (el) {
+                        if (el.tagName === 'IMG') { el.src = val; el.style.display = 'block'; }
+                        else { el.innerHTML = val; }
+                    }
+
+                    // Handle Team Status (DEAD / MISSED)
+                    if (key.startsWith('f_status_')) {
+                        let num = key.split('_')[2];
+                        let row = document.getElementById(`row_${num}`);
+                        if (row) {
+                            row.classList.remove('status-dead', 'status-missed');
+                            if (val.toUpperCase() === 'DEAD') row.classList.add('status-dead');
+                            if (val.toUpperCase() === 'MISSED' || val.toUpperCase() === 'MISS') row.classList.add('status-missed');
+                        }
                     }
                 }
+            } catch (e) { console.error("Update Error: ", e); }
+        }
+
+        // Initialize
+        generateTeamRows();
+
+        function processState(state) {
+            if (state && state.teams) {
+                let newData = {};
+                state.teams.forEach((t, i) => {
+                    let teamIndex = i + 1;
+                    newData[`f_team_${teamIndex}`] = t.name;
+                    newData[`f_status_${teamIndex}`] = t.status;
+                });
+                update(newData);
             }
-        } catch (e) { console.error("Update Error: ", e); }
-    }
-
-    // Initialize
-    generateTeamRows();
-    
-    function processState(state) {
-        if(state && state.teams) {
-            let newData = {};
-            state.teams.forEach((t, i) => {
-                let teamIndex = i + 1;
-                newData[`f_team_${teamIndex}`] = t.name;
-                newData[`f_status_${teamIndex}`] = t.status;
-            });
-            update(newData);
         }
-    }
 
-    // Check existing state on load
-    try {
-        let saved = localStorage.getItem('pubgm_overlay_state');
-        if (saved) {
-            processState(JSON.parse(saved));
-        }
-    } catch(e) {}
-    
-    // Always show map overlay
-    setTimeout(() => play(), 500);
+        // Check existing state on load
+        fetch('http://localhost:3000/api/state')
+            .then(r => r.json())
+            .then(state => processState(state))
+            .catch(e => { });
 
-    // Listen for updates from Dashboard
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'pubgm_overlay_state' && e.newValue) {
+        // Always show map overlay
+        setTimeout(() => play(), 500);
+
+        // Listen for real-time updates from Server
+        const evtSource = new EventSource("http://localhost:3000/api/stream");
+        evtSource.onmessage = (event) => {
             try {
-                processState(JSON.parse(e.newValue));
-            } catch(e) {}
-        }
-    });
+                processState(JSON.parse(event.data));
+            } catch (e) { }
+        };
 
-</script>
+    </script>
 </body>
+
 </html>
