@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminated Overlay</title>
+    <link rel="stylesheet" href="css/standard.css">
+    <style>
+        @font-face {
+            font-family: 'AgencyFB';
+            src: url('fonts/agency_fb.ttf') format('truetype');
+        }
+        body, html {
+            margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden;
+            font-family: 'AgencyFB', sans-serif; background: transparent;
+        }
+
+        #container {
+            width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
+            display: flex; justify-content: center; align-items: flex-end; padding-bottom: 150px;
+        }
+
+        .eliminated-box {
+            display: flex; flex-direction: column; align-items: center;
+            border: 4px solid var(--elimated-border-color, rgb(9, 125, 202));
+            box-shadow: 0 0 30px rgba(9, 125, 202, 0.8);
+            transform: translateY(300px) scale(0.5); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #container.show .eliminated-box {
+            transform: translateY(0) scale(1); opacity: 1;
+        }
+
+        .header {
+            background-color: var(--elimated-header-background-color, rgba(255, 255, 255, 0.781));
+            color: var(--elimated-header-color, rgb(0, 0, 0));
+            text-shadow: var(--elimated-header-text-shadow, 0 0 10px rgba(27, 111, 190, 0.733));
+            font-family: var(--elimated-header-font-family, 'AgencyFB', sans-serif);
+            font-size: 50px; font-weight: bold; padding: 5px 60px; width: 100%; text-align: center;
+            text-transform: uppercase; letter-spacing: 5px;
+        }
+
+        .info-row {
+            display: flex; width: 100%;
+            font-family: var(--elimated-info-font-family, 'AgencyFB', sans-serif);
+        }
+
+        .team-part {
+            background-color: var(--elimated-team-background-color, rgb(7, 93, 143));
+            color: var(--elimated-team-color, rgb(255, 255, 255));
+            text-shadow: var(--elimated-team-text-shadow, 0 0 10px rgba(255, 255, 255, 0.5));
+            font-size: 60px; padding: 10px 40px; display: flex; align-items: center; gap: 20px;
+            flex-grow: 1; font-weight: bold; text-transform: uppercase;
+        }
+
+        .kill-part {
+            background-color: var(--elimated-kill-background-color, rgba(197, 219, 236, 0.855));
+            color: var(--elimated-kill-color, rgb(47, 47, 47));
+            text-shadow: var(--elimated-kill-text-shadow, 0 0 10px rgba(8, 37, 71, 0.2));
+            font-size: 60px; padding: 10px 40px; font-weight: bold; text-align: center;
+        }
+        .kill-label { font-size: 20px; color: #555; text-transform: uppercase; margin-top: -10px; }
+
+        .team-logo { width: 60px; height: 60px; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div class="eliminated-box">
+        <div class="header">TEAM ELIMINATED</div>
+        <div class="info-row">
+            <div class="team-part">
+                <img class="team-logo" src="team_logos/placeholder.png" onerror="this.style.display='none'">
+                <span id="f_team_name">TEAM NAME</span>
+            </div>
+            <div class="kill-part">
+                <div id="f_kills">0</div>
+                <div class="kill-label">ELIMS</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function play() { document.getElementById('container').classList.add('show'); }
+    function stop() { document.getElementById('container').classList.remove('show'); }
+
+    function update(str) {
+        try {
+            var data = typeof str === 'string' ? JSON.parse(str) : str;
+            for (var key in data) {
+                var val = data[key];
+                if (val && typeof val === 'object' && val.v !== undefined) { val = val.v; }
+                var el = document.getElementById(key);
+                if (el) { el.innerHTML = val; }
+            }
+        } catch (e) { console.error("Update Error: ", e); }
+    }
+
+    let lastElimTimestamp = 0;
+
+    function checkState(state) {
+        if(state && state.eliminated_trigger) {
+            let trigger = state.eliminated_trigger;
+            if (trigger.timestamp > lastElimTimestamp && trigger.team_name) {
+                lastElimTimestamp = trigger.timestamp;
+                update({ "f_team_name": trigger.team_name, "f_kills": trigger.kills });
+                play();
+                // Auto-hide after 5 seconds
+                setTimeout(() => stop(), 5000);
+            }
+        }
+    }
+
+    // Check existing state on load to prevent triggering old events
+    try {
+        let saved = localStorage.getItem('pubgm_overlay_state');
+        if (saved) {
+            let state = JSON.parse(saved);
+            if (state.eliminated_trigger) {
+                lastElimTimestamp = state.eliminated_trigger.timestamp;
+            }
+        }
+    } catch(e) {}
+
+    // Listen for updates from Dashboard
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'pubgm_overlay_state' && e.newValue) {
+            try {
+                let state = JSON.parse(e.newValue);
+                checkState(state);
+            } catch(e) {}
+        }
+    });
+</script>
+</body>
+</html>

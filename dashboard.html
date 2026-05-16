@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PUBGM Overlay Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0d0f14;
+            --bg-card: #161a24;
+            --bg-card2: #1d2235;
+            --border: #2a3050;
+            --accent: #4f7cf7;
+            --accent2: #6f3de8;
+            --green: #22c55e;
+            --yellow: #eab308;
+            --orange: #f97316;
+            --red: #ef4444;
+            --grey: #6b7280;
+            --miss: #374151;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .app-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .app-title { font-size: 20px; font-weight: 700; color: white; letter-spacing: 0.5px; }
+        .app-title span { color: var(--accent); }
+
+        .status-bar {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            padding: 8px 16px; border-radius: 999px;
+        }
+        .status-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--red);
+            box-shadow: 0 0 8px var(--red);
+        }
+        .status-dot.ok { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .status-text { font-size: 13px; font-weight: 500; color: #94a3b8; }
+
+        /* TABS */
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--bg-card); padding: 5px; border-radius: 10px; border: 1px solid var(--border); }
+        .tab-btn {
+            flex: 1; padding: 10px 0; border: none; background: transparent; color: #64748b;
+            border-radius: 7px; cursor: pointer; font-size: 14px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(79,124,247,0.4); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* TEAM NAMES */
+        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 12px; }
+        .team-names-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .team-name-item { display: flex; flex-direction: column; gap: 4px; }
+        .team-name-item label { font-size: 11px; color: #64748b; font-weight: 600; }
+        .team-name-item input {
+            padding: 8px 10px; background: var(--bg-card2); border: 1px solid var(--border);
+            color: white; border-radius: 6px; font-size: 13px; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .team-name-item input:focus { outline: none; border-color: var(--accent); }
+        .team-name-item input:focus { box-shadow: 0 0 0 3px rgba(79,124,247,0.15); }
+
+        .btn-save-names {
+            margin-top: 16px; padding: 12px 30px; background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; color: white; border-radius: 8px; cursor: pointer; font-size: 14px;
+            font-weight: 700; transition: all 0.2s; letter-spacing: 0.5px;
+        }
+        .btn-save-names:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(79,124,247,0.4); }
+
+        /* LIVE TICKER */
+        .ticker-team-list { display: flex; flex-direction: column; gap: 6px; }
+        .ticker-row {
+            display: grid; grid-template-columns: 30px 1fr 200px 80px 90px;
+            align-items: center; gap: 12px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            padding: 10px 14px; border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .ticker-row:hover { background: var(--bg-card2); }
+        .ticker-row.is-dead { opacity: 0.5; }
+        .ticker-row.is-miss { opacity: 0.35; }
+        .t-id { font-size: 13px; font-weight: 700; color: #64748b; }
+        .t-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .t-name.is-dead { text-decoration: line-through; color: #64748b; }
+        .alive-btns { display: flex; gap: 4px; }
+        .btn-a {
+            width: 36px; height: 36px; border: 1.5px solid transparent; border-radius: 6px;
+            cursor: pointer; font-size: 14px; font-weight: 800; transition: all 0.15s;
+            background: var(--bg-base); color: #64748b;
+        }
+        .btn-a[data-val="4"] { color: var(--green); border-color: rgba(34,197,94,0.4); }
+        .btn-a[data-val="3"] { color: #84cc16; border-color: rgba(132,204,22,0.4); }
+        .btn-a[data-val="2"] { color: var(--yellow); border-color: rgba(234,179,8,0.4); }
+        .btn-a[data-val="1"] { color: var(--orange); border-color: rgba(249,115,22,0.4); }
+        .btn-a[data-val="0"] { color: var(--red); border-color: rgba(239,68,68,0.4); }
+        .btn-a.active[data-val="4"] { background: var(--green); color: white; box-shadow: 0 0 12px rgba(34,197,94,0.5); border-color: transparent; }
+        .btn-a.active[data-val="3"] { background: #84cc16; color: white; box-shadow: 0 0 12px rgba(132,204,22,0.5); border-color: transparent; }
+        .btn-a.active[data-val="2"] { background: var(--yellow); color: black; box-shadow: 0 0 12px rgba(234,179,8,0.5); border-color: transparent; }
+        .btn-a.active[data-val="1"] { background: var(--orange); color: white; box-shadow: 0 0 12px rgba(249,115,22,0.5); border-color: transparent; }
+        .btn-a.active[data-val="0"] { background: var(--red); color: white; box-shadow: 0 0 12px rgba(239,68,68,0.5); border-color: transparent; }
+
+        .btn-miss-ticker {
+            width: 70px; height: 36px; border: 1.5px solid rgba(107,114,128,0.5);
+            background: transparent; color: #64748b; border-radius: 6px; cursor: pointer;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+            transition: all 0.15s;
+        }
+        .btn-miss-ticker.active { background: var(--miss); border-color: #6b7280; color: white; }
+
+        .t-elims-wrap { display: flex; align-items: center; gap: 5px; }
+        .t-elims-input {
+            width: 52px; padding: 6px 6px; background: var(--bg-base); border: 1px solid var(--border);
+            color: white; border-radius: 5px; font-size: 14px; font-weight: 700;
+            text-align: center; font-family: inherit;
+        }
+        .t-elims-label { font-size: 10px; color: #64748b; font-weight: 600; letter-spacing: 0.5px; }
+
+        /* ELIMINATED TAB */
+        .elim-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .elim-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .elim-card-name { font-size: 13px; font-weight: 700; text-transform: uppercase; }
+        .elim-card-row { display: flex; align-items: center; gap: 6px; }
+        .elim-kill-input {
+            width: 55px; padding: 6px 8px; background: var(--bg-base); border: 1px solid var(--border);
+            color: white; border-radius: 5px; font-size: 14px; font-weight: 700; text-align: center; font-family: inherit;
+        }
+        .kill-label { font-size: 12px; color: #64748b; font-weight: 500; }
+        .btn-eliminate {
+            width: 100%; padding: 8px 0; border: none; border-radius: 6px;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white; font-size: 12px; font-weight: 800; cursor: pointer;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            transition: all 0.15s;
+        }
+        .btn-eliminate:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(220,38,38,0.5); }
+        .btn-eliminate:active { transform: scale(0.97); }
+
+        /* NOTIFICATIONS */
+        .notif {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--green); color: white; padding: 12px 20px;
+            border-radius: 8px; font-size: 14px; font-weight: 700;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 9999;
+        }
+        .notif.show { transform: translateY(0); opacity: 1; }
+        .notif.danger { background: var(--red); }
+
+    </style>
+</head>
+<body>
+
+<div class="app-header">
+    <div class="app-title">PUBG MOBILE <span>OVERLAY DASHBOARD</span></div>
+    <div class="status-bar">
+        <div class="status-dot" id="status-dot"></div>
+        <div class="status-text" id="status-text">Connecting...</div>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-ticker')">🎮 Live Ticker</button>
+    <button class="tab-btn" onclick="switchTab('tab-elim')">💀 Eliminated</button>
+    <button class="tab-btn" onclick="switchTab('tab-names')">✏️ Nama Tim</button>
+</div>
+
+<!-- TAB: LIVE TICKER -->
+<div class="tab-content active" id="tab-ticker">
+    <p class="section-label">Status Pemain — Klik angka untuk mengatur jumlah pemain hidup</p>
+    <div class="ticker-team-list" id="ticker-list"></div>
+</div>
+
+<!-- TAB: ELIMINATED -->
+<div class="tab-content" id="tab-elim">
+    <p class="section-label">Eliminated — Isi kills lalu klik ELIMINATE untuk menampilkan pop-up ke layar (auto-hilang 5 detik)</p>
+    <div class="elim-grid" id="elim-grid"></div>
+</div>
+
+<!-- TAB: NAMA TIM -->
+<div class="tab-content" id="tab-names">
+    <p class="section-label">Nama Tim — Atur nama 20 tim, klik Simpan untuk sinkronisasi semua grafis</p>
+    <div class="team-names-grid" id="names-grid"></div>
+    <button class="btn-save-names" onclick="saveState('force')">💾 SIMPAN SEMUA NAMA</button>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+    let state = { teams: [], eliminated_trigger: { team_name: "", kills: 0, timestamp: 0 } };
+    for(let i = 1; i <= 20; i++) {
+        state.teams.push({ id: i, name: `TEAM ${i}`, alive: 4, status: "ALIVE", kills: 0 });
+    }
+
+    // ---- TABS ----
+    function switchTab(id) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // ---- NOTIFICATIONS ----
+    let notifTimer;
+    function showNotif(msg, type = 'ok') {
+        const el = document.getElementById('notif');
+        el.textContent = msg;
+        el.className = 'notif show' + (type === 'danger' ? ' danger' : '');
+        clearTimeout(notifTimer);
+        notifTimer = setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // ---- RENDER TICKER ----
+    function renderTickerList() {
+        const list = document.getElementById('ticker-list');
+        list.innerHTML = '';
+        state.teams.forEach((t, index) => {
+            const isMiss = t.status === 'MISS';
+            const isDead = t.alive === 0 && t.status !== 'MISS';
+            let aliveBtns = '';
+            for(let a = 4; a >= 0; a--) {
+                const isActive = !isMiss && t.alive === a;
+                aliveBtns += `<button class="btn-a ${isActive ? 'active' : ''}" data-val="${a}" onclick="setAlive(${index},${a})">${a}</button>`;
+            }
+            const row = document.createElement('div');
+            row.className = `ticker-row ${isDead ? 'is-dead' : ''} ${isMiss ? 'is-miss' : ''}`;
+            row.innerHTML = `
+                <div class="t-id">#${t.id}</div>
+                <div class="t-name ${isDead || isMiss ? 'is-dead' : ''}">${t.name}</div>
+                <div class="alive-btns">${aliveBtns}</div>
+                <div class="t-elims-wrap">
+                    <input type="number" class="t-elims-input" value="${t.kills}" min="0"
+                        oninput="setKills(${index}, this.value)" title="Total Elims">
+                    <span class="t-elims-label">ELIMS</span>
+                </div>
+                <button class="btn-miss-ticker ${isMiss ? 'active' : ''}" onclick="setMiss(${index})">MISS</button>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    // ---- RENDER ELIMINATED ----
+    function renderElimGrid() {
+        const grid = document.getElementById('elim-grid');
+        grid.innerHTML = '';
+        state.teams.forEach((t, index) => {
+            const card = document.createElement('div');
+            card.className = 'elim-card';
+            card.innerHTML = `
+                <div class="elim-card-name">#${t.id} ${t.name}</div>
+                <div class="elim-card-row">
+                    <input type="number" class="elim-kill-input" value="${t.kills}" min="0" oninput="setKills(${index}, this.value)" title="Elims">
+                    <span class="kill-label">ELIMS</span>
+                </div>
+                <button class="btn-eliminate" onclick="triggerEliminated(${index})">💀 ELIMINATE</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // ---- RENDER NAMES ----
+    function renderNameGrid() {
+        const grid = document.getElementById('names-grid');
+        grid.innerHTML = '';
+        state.teams.forEach((t, index) => {
+            const item = document.createElement('div');
+            item.className = 'team-name-item';
+            item.innerHTML = `
+                <label>TIM #${t.id}</label>
+                <input type="text" value="${t.name}" oninput="setName(${index}, this.value)">
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    function renderAll() {
+        renderTickerList();
+        renderElimGrid();
+        renderNameGrid();
+    }
+
+    // ---- ACTIONS ----
+    function setAlive(index, val) {
+        state.teams[index].alive = val;
+        state.teams[index].status = (val === 0) ? "DEAD" : "ALIVE";
+        renderTickerList();   // only re-render ticker to preserve elim input focus
+        renderElimGrid();     // refresh elim tab card names
+        saveState();
+    }
+
+    function setMiss(index) {
+        state.teams[index].status = state.teams[index].status === 'MISS' ? 'ALIVE' : 'MISS';
+        if (state.teams[index].status === 'MISS') state.teams[index].alive = 0;
+        else state.teams[index].alive = 4;
+        renderTickerList();
+        renderElimGrid();
+        saveState();
+    }
+
+    // Debounce timer for name changes
+    let nameDebounce;
+    function setName(index, val) {
+        state.teams[index].name = val.trim() || `TEAM ${index + 1}`;
+        clearTimeout(nameDebounce);
+        nameDebounce = setTimeout(() => saveState(), 800); // auto-save after 0.8s
+    }
+
+    function setKills(index, val) {
+        state.teams[index].kills = parseInt(val) || 0;
+        saveState(); // immediately sync to overlay
+    }
+
+    function triggerEliminated(index) {
+        let t = state.teams[index];
+        t.alive = 0;
+        t.status = "DEAD";
+        state.eliminated_trigger = { team_name: t.name, kills: t.kills, timestamp: Date.now() };
+        renderAll();
+        saveState();
+        showNotif(`💀 ELIMINATED! ${t.name}`, 'danger');
+    }
+
+    // ---- SAVE STATE ----
+    function saveState(mode) {
+        const dot = document.getElementById('status-dot');
+        const text = document.getElementById('status-text');
+        
+        try {
+            localStorage.setItem('pubgm_overlay_state', JSON.stringify(state));
+            dot.className = 'status-dot ok';
+            text.textContent = 'Synced ✓';
+            if (mode === 'force') showNotif('✅ Semua nama tim tersimpan!');
+        } catch(e) {
+            dot.className = 'status-dot';
+            text.textContent = 'Sync Failed';
+            showNotif('❌ Gagal menyimpan data!', 'danger');
+        }
+    }
+
+    // ---- LOAD STATE ----
+    function loadState() {
+        let saved = localStorage.getItem('pubgm_overlay_state');
+        if (saved) {
+            try {
+                let data = JSON.parse(saved);
+                if(data && data.teams && data.teams.length === 20) {
+                    state = data;
+                }
+            } catch(e) {}
+        }
+        
+        renderAll();
+        document.getElementById('status-dot').className = 'status-dot ok';
+        document.getElementById('status-text').textContent = 'Connected ✓';
+        saveState(); // Sync on load
+    }
+
+    // Sync from other tabs (if user opens multiple dashboard tabs)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'pubgm_overlay_state' && e.newValue) {
+            try {
+                let data = JSON.parse(e.newValue);
+                if(data && data.teams) {
+                    state = data;
+                    renderAll();
+                }
+            } catch(e) {}
+        }
+    });
+
+    loadState();
+</script>
+</body>
+</html>
