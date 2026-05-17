@@ -37,7 +37,6 @@
         min-height: 100vh;
         padding: 20px;
       }
-
       .app-header {
         display: flex;
         align-items: center;
@@ -63,7 +62,6 @@
         align-items: center;
         flex-wrap: wrap;
       }
-
       .status-bar {
         display: flex;
         align-items: center;
@@ -95,7 +93,6 @@
         color: #94a3b8;
       }
 
-      /* SHEETS BAR */
       .sheets-bar {
         background: var(--bg-card);
         border: 1px solid var(--border);
@@ -197,7 +194,6 @@
       .sync-countdown.active {
         color: var(--accent);
       }
-
       .sheets-connected-badge {
         display: none;
         align-items: center;
@@ -214,7 +210,6 @@
         display: flex;
       }
 
-      /* TABS */
       .tabs {
         display: flex;
         gap: 4px;
@@ -256,7 +251,6 @@
         margin-bottom: 12px;
       }
 
-      /* OVERRIDE NOTE */
       .override-note {
         font-size: 11px;
         color: #4f7cf7;
@@ -552,6 +546,92 @@
         box-shadow: 0 8px 25px rgba(79, 124, 247, 0.4);
       }
 
+      /* OVERALL STANDINGS TAB */
+      .standings-info {
+        background: rgba(79, 124, 247, 0.08);
+        border: 1px solid rgba(79, 124, 247, 0.2);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        color: #4f7cf7;
+      }
+      .standings-header {
+        display: grid;
+        grid-template-columns: 40px 1fr 70px 80px 70px 80px 80px 80px;
+        gap: 8px;
+        padding: 8px 14px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 6px;
+      }
+      .standings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .standings-row {
+        display: grid;
+        grid-template-columns: 40px 1fr 70px 80px 70px 80px 80px 80px;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 8px 14px;
+        border-radius: 8px;
+      }
+      .standings-row:first-child {
+        border-color: #ffd700;
+        background: rgba(75, 65, 21, 0.4);
+      }
+      .s-pos {
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748b;
+        text-align: center;
+      }
+      .s-name {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .s-wwcd {
+        text-align: center;
+      }
+      .s-wwcd input {
+        width: 55px;
+        padding: 5px;
+        background: var(--bg-base);
+        border: 1px solid var(--border);
+        color: var(--yellow);
+        border-radius: 5px;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        font-family: inherit;
+      }
+      .s-val {
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        color: #94a3b8;
+      }
+      .s-total {
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+        color: var(--accent);
+      }
+      .s-place {
+        color: var(--green);
+      }
+      .s-kill {
+        color: var(--orange);
+      }
+
       /* GUIDE */
       .guide-steps {
         display: flex;
@@ -669,7 +749,6 @@
       </div>
     </div>
 
-    <!-- SHEETS BAR -->
     <div class="sheets-bar">
       <div class="sheets-bar-label">📊 Google Sheets</div>
       <input
@@ -704,8 +783,11 @@
       <button class="tab-btn" onclick="switchTab('tab-names', this)">
         ✏️ Nama Tim
       </button>
+      <button class="tab-btn" onclick="switchTab('tab-standings', this)">
+        🏆 Overall Standings
+      </button>
       <button class="tab-btn" onclick="switchTab('tab-guide', this)">
-        📖 Cara Setup Sheets
+        📖 Cara Setup
       </button>
     </div>
 
@@ -741,6 +823,27 @@
       </button>
     </div>
 
+    <!-- OVERALL STANDINGS -->
+    <div class="tab-content" id="tab-standings">
+      <div class="standings-info">
+        🏆 Overall Standings — Data rank &amp; kills dari Sheets, WWCD diinput
+        manual. Poin: Rank1=12, Rank2=9, Rank3=8, Rank4=7, Rank5=6, Rank6=5,
+        Rank7=4, Rank8=3, Rank9=2, Rank10=1. Kill=1pt. Data otomatis terkirim ke
+        overlay <b>overall-standings.html</b>.
+      </div>
+      <div class="standings-header">
+        <div>#</div>
+        <div>TEAM</div>
+        <div style="text-align: center">WWCD</div>
+        <div style="text-align: center">PLACE PTS</div>
+        <div style="text-align: center">KILLS</div>
+        <div style="text-align: center">KILL PTS</div>
+        <div style="text-align: center">TOTAL</div>
+        <div style="text-align: center">RANK</div>
+      </div>
+      <div class="standings-list" id="standings-list"></div>
+    </div>
+
     <!-- CARA SETUP -->
     <div class="tab-content" id="tab-guide">
       <p class="section-label">Panduan Setup Google Sheets Real-Time</p>
@@ -748,85 +851,54 @@
         <div class="guide-step">
           <div class="guide-step-header">
             <div class="step-num">1</div>
-            <div class="step-title">Buat Google Sheets — nama tab: PUBGM</div>
+            <div class="step-title">Buat Google Sheets — nama tab: FF</div>
           </div>
           <div class="step-body">
-            Buka <b>sheets.google.com</b>, buat spreadsheet baru. Klik kanan tab
-            bawah → rename jadi <b>PUBGM</b>.<br />
             Isi baris 1 sebagai header, baris 2 dst sebagai data tim:
             <div class="code-block">
               <span class="hl">A(id)</span> <span class="hl">B(name)</span>
               <span class="hl">C(alive)</span> <span class="hl">D(kills)</span>
-              <span class="hl">E(rank)</span>
-              1 TEAM ALPHA 4 3 2 2 TEAM BRAVO 0 7 1 3 TEAM CHARLIE 2 5 3
-              ...hingga 20 tim
+              <span class="hl">E(rank)</span> <span class="hl">F(wwcd)</span>
             </div>
-            alive: 0–4 (jumlah pemain hidup). alive=0 → otomatis status DEAD.
+            Kolom F (wwcd) = berapa kali tim menang (rank 1) — diisi manual per
+            match.
           </div>
         </div>
-
         <div class="guide-step">
           <div class="guide-step-header">
             <div class="step-num">2</div>
-            <div class="step-title">Buka Apps Script & paste kode Code.gs</div>
+            <div class="step-title">Update Code.gs</div>
           </div>
           <div class="step-body">
-            Di Google Sheets: menu <b>Extensions → Apps Script</b>.<br />
-            Hapus semua kode yang ada. Paste isi file <b>Code.gs</b> yang sudah
-            didownload. Tekan <b>Ctrl+S</b>.
+            Ganti kode Apps Script dengan file <b>Code.gs</b> terbaru yang sudah
+            include kolom wwcd dan kalkulasi poin otomatis. Deploy ulang sebagai
+            versi baru.
           </div>
         </div>
-
         <div class="guide-step">
           <div class="guide-step-header">
             <div class="step-num">3</div>
-            <div class="step-title">Deploy sebagai Web App</div>
+            <div class="step-title">Sistem Poin Placement</div>
           </div>
           <div class="step-body">
-            Klik <b>Deploy → New Deployment</b> → pilih type: <b>Web App</b>.
             <div class="code-block">
-              Execute as : <span class="hl2">Me (email kamu)</span> Who has
-              access: <span class="hl2">Anyone</span>
+              Rank 1 = <span class="hl2">12 pts</span> | Rank 2 =
+              <span class="hl2">9 pts</span> | Rank 3 =
+              <span class="hl2">8 pts</span><br />
+              Rank 4 = <span class="hl2">7 pts</span> | Rank 5 =
+              <span class="hl2">6 pts</span> | Rank 6 =
+              <span class="hl2">5 pts</span><br />
+              Rank 7 = <span class="hl2">4 pts</span> | Rank 8 =
+              <span class="hl2">3 pts</span> | Rank 9 =
+              <span class="hl2">2 pts</span><br />
+              Rank 10 = <span class="hl2">1 pts</span> | Rank 11+ =
+              <span class="hl2">0 pts</span><br />
+              Kill = <span class="hl2">1 pt</span> per kill
             </div>
-            Klik <b>Deploy</b> → <b>Authorize access</b> → pilih akun Google →
-            Allow.<br />
-            Copy <b>Web App URL</b> yang muncul (dimulai dengan
-            https://script.google.com/...).
             <div class="warn-box">
-              ⚠️ Setiap kali edit Code.gs, harus Deploy ulang agar perubahan
-              aktif!
+              ⚠️ WWCD di kolom F harus diupdate manual di Google Sheets tiap tim
+              menang.
             </div>
-          </div>
-        </div>
-
-        <div class="guide-step">
-          <div class="guide-step-header">
-            <div class="step-num">4</div>
-            <div class="step-title">Paste URL ke Dashboard → Hubungkan</div>
-          </div>
-          <div class="step-body">
-            Paste URL tadi ke kolom <b>📊 Google Sheets</b> di bagian atas
-            dashboard → klik <b>🔗 Hubungkan</b>.<br />
-            Jika berhasil, badge <b>🟢 Google Sheets Aktif</b> muncul. Data sync
-            otomatis tiap <b>10 detik</b>.
-          </div>
-        </div>
-
-        <div class="guide-step">
-          <div class="guide-step-header">
-            <div class="step-num">5</div>
-            <div class="step-title">Cara pakai saat match berlangsung</div>
-          </div>
-          <div class="step-body">
-            Operator cukup edit Google Sheets langsung (bisa dari HP/laptop
-            lain).<br />
-            Dalam ≤10 detik, semua overlay OBS otomatis update.<br /><br />
-            • Tim mati → <b>alive = 0</b><br />
-            • Update kills → edit kolom <b>kills</b><br />
-            • Update posisi → edit kolom <b>rank</b><br />
-            • Baris diupdate dari Sheets akan <b>berkedip biru</b> di ticker<br />
-            • Tab <b>💀 Eliminated</b> tetap klik manual untuk trigger animasi
-            pop-up
           </div>
         </div>
       </div>
@@ -835,6 +907,15 @@
     <div class="notif" id="notif"></div>
 
     <script>
+      // ============================================================
+      // PLACEMENT POINTS TABLE
+      // ============================================================
+      const PLACEMENT_PTS = [12, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+      function getPlacementPts(rank) {
+        if (rank >= 1 && rank <= 10) return PLACEMENT_PTS[rank - 1];
+        return 0;
+      }
+
       // ============================================================
       // STATE
       // ============================================================
@@ -850,6 +931,10 @@
           status: "ALIVE",
           kills: 0,
           rank: i,
+          wwcd: 0,
+          place_pts: getPlacementPts(i),
+          kill_pts: 0,
+          total: getPlacementPts(i),
         });
       }
 
@@ -865,7 +950,7 @@
       function connectSheets() {
         const url = document.getElementById("sheets-url").value.trim();
         if (!url || !url.startsWith("https://")) {
-          showNotif("❌ URL tidak valid! Harus diawali https://", "danger");
+          showNotif("❌ URL tidak valid!", "danger");
           return;
         }
         sheetsUrl = url;
@@ -927,23 +1012,18 @@
         el.textContent = `Sync dalam ${countdownVal}s`;
         el.classList.toggle("active", countdownVal <= 3);
       }
+
       function fetchFromSheets() {
         if (!sheetsUrl) return;
         document.getElementById("sync-spinner").style.display = "block";
-
-        // Hapus script JSONP lama jika ada
         const oldScript = document.getElementById("jsonp-script");
         if (oldScript) oldScript.remove();
-
-        // Buat callback unik
         const cbName = "jsonpCb_" + Date.now();
-
         window[cbName] = function (data) {
           try {
             if (data.error) throw new Error(data.error);
             if (!data.teams || !Array.isArray(data.teams))
               throw new Error("Format data tidak valid");
-
             const changedIds = [];
             data.teams.forEach((remote) => {
               const idx = state.teams.findIndex((t) => t.id === remote.id);
@@ -953,22 +1033,37 @@
                 local.alive !== remote.alive ||
                 local.kills !== remote.kills ||
                 local.rank !== remote.rank ||
-                local.name !== remote.name
+                local.name !== remote.name ||
+                local.wwcd !== remote.wwcd
               ) {
                 changedIds.push(remote.id);
               }
-              state.teams[idx] = { ...local, ...remote };
+              // Hitung ulang poin dari data remote
+              const place_pts =
+                remote.place_pts !== undefined
+                  ? remote.place_pts
+                  : getPlacementPts(remote.rank);
+              const kill_pts =
+                remote.kill_pts !== undefined ? remote.kill_pts : remote.kills;
+              const total =
+                remote.total !== undefined
+                  ? remote.total
+                  : place_pts + kill_pts;
+              state.teams[idx] = {
+                ...local,
+                ...remote,
+                place_pts,
+                kill_pts,
+                total,
+              };
             });
-
             renderAll(changedIds);
             saveState();
-
             document.getElementById("sheets-badge").classList.add("show");
             document.getElementById("status-dot").className = "status-dot ok";
             document.getElementById("status-text").textContent =
               "Synced from Sheets ✓";
             countdownVal = SYNC_EVERY;
-
             if (changedIds.length > 0)
               showNotif(
                 `📊 ${changedIds.length} tim diupdate dari Sheets`,
@@ -984,8 +1079,6 @@
             delete window[cbName];
           }
         };
-
-        // Inject script tag JSONP
         const script = document.createElement("script");
         script.id = "jsonp-script";
         script.src = sheetsUrl + "?t=" + Date.now() + "&callback=" + cbName;
@@ -1011,6 +1104,7 @@
           .forEach((el) => el.classList.remove("active"));
         document.getElementById(id).classList.add("active");
         btn.classList.add("active");
+        if (id === "tab-standings") renderStandings();
       }
 
       // ============================================================
@@ -1051,16 +1145,16 @@
           const row = document.createElement("div");
           row.className = `ticker-row ${isDead ? "is-dead" : ""} ${isMiss ? "is-miss" : ""} ${isChanged ? "sheets-updated" : ""}`;
           row.innerHTML = `
-                <div class="t-id">#${t.id}</div>
-                <div class="t-name ${isDead || isMiss ? "is-dead" : ""}">${t.name}</div>
-                <div class="alive-btns">${aliveBtns}</div>
-                <div class="t-elims-wrap">
-                    <input type="number" class="t-elims-input" value="${t.kills}" min="0" oninput="setKills(${index}, this.value)">
-                    <span class="t-elims-label">ELIMS</span>
-                </div>
-                <input type="number" class="t-rank-input" value="${t.rank || index + 1}" min="1" max="20" oninput="setRank(${index}, this.value)" title="Rank">
-                <button class="btn-miss-ticker ${isMiss ? "active" : ""}" onclick="setMiss(${index})">MISS</button>
-            `;
+            <div class="t-id">#${t.id}</div>
+            <div class="t-name ${isDead || isMiss ? "is-dead" : ""}">${t.name}</div>
+            <div class="alive-btns">${aliveBtns}</div>
+            <div class="t-elims-wrap">
+              <input type="number" class="t-elims-input" value="${t.kills}" min="0" oninput="setKills(${index}, this.value)">
+              <span class="t-elims-label">ELIMS</span>
+            </div>
+            <input type="number" class="t-rank-input" value="${t.rank || index + 1}" min="1" max="20" oninput="setRank(${index}, this.value)" title="Rank">
+            <button class="btn-miss-ticker ${isMiss ? "active" : ""}" onclick="setMiss(${index})">MISS</button>
+          `;
           list.appendChild(row);
         });
       }
@@ -1072,13 +1166,13 @@
           const card = document.createElement("div");
           card.className = "elim-card";
           card.innerHTML = `
-                <div class="elim-card-name">#${t.id} ${t.name}</div>
-                <div class="elim-card-row">
-                    <input type="number" class="elim-kill-input" value="${t.kills}" min="0" oninput="setKills(${index}, this.value)">
-                    <span class="kill-label">ELIMS</span>
-                </div>
-                <button class="btn-eliminate" onclick="triggerEliminated(${index})">💀 ELIMINATE</button>
-            `;
+            <div class="elim-card-name">#${t.id} ${t.name}</div>
+            <div class="elim-card-row">
+              <input type="number" class="elim-kill-input" value="${t.kills}" min="0" oninput="setKills(${index}, this.value)">
+              <span class="kill-label">ELIMS</span>
+            </div>
+            <button class="btn-eliminate" onclick="triggerEliminated(${index})">💀 ELIMINATE</button>
+          `;
           grid.appendChild(card);
         });
       }
@@ -1094,10 +1188,50 @@
         });
       }
 
+      function renderStandings() {
+        const list = document.getElementById("standings-list");
+        list.innerHTML = "";
+        // Hitung dan sort by total desc
+        const sorted = state.teams
+          .filter((t) => t.status !== "MISS")
+          .map((t) => {
+            const place_pts = getPlacementPts(t.rank);
+            const kill_pts = t.kills;
+            const total = place_pts + kill_pts;
+            return { ...t, place_pts, kill_pts, total };
+          })
+          .sort(
+            (a, b) =>
+              b.total - a.total || b.wwcd - a.wwcd || b.kill_pts - a.kill_pts,
+          );
+
+        sorted.forEach((t, i) => {
+          const pos = i + 1;
+          const row = document.createElement("div");
+          row.className = "standings-row";
+          const teamIdx = state.teams.findIndex((x) => x.id === t.id);
+          row.innerHTML = `
+            <div class="s-pos">${pos}</div>
+            <div class="s-name">${t.name}</div>
+            <div class="s-wwcd">
+              <input type="number" value="${t.wwcd || 0}" min="0" style="width:55px;padding:5px;background:var(--bg-base);border:1px solid var(--border);color:var(--yellow);border-radius:5px;font-size:13px;font-weight:700;text-align:center;font-family:inherit;"
+                oninput="setWwcd(${teamIdx}, this.value)">
+            </div>
+            <div class="s-val s-place">${t.place_pts}</div>
+            <div class="s-val">${t.kills}</div>
+            <div class="s-val s-kill">${t.kill_pts}</div>
+            <div class="s-total">${t.total}</div>
+            <div class="s-val">#${t.rank}</div>
+          `;
+          list.appendChild(row);
+        });
+      }
+
       function renderAll(changedIds = []) {
         renderTickerList(changedIds);
         renderElimGrid();
         renderNameGrid();
+        renderStandings();
       }
 
       // ============================================================
@@ -1108,6 +1242,7 @@
         state.teams[index].status = val === 0 ? "DEAD" : "ALIVE";
         renderTickerList();
         renderElimGrid();
+        renderStandings();
         saveState();
       }
       function setMiss(index) {
@@ -1116,6 +1251,7 @@
         state.teams[index].alive = state.teams[index].status === "MISS" ? 0 : 4;
         renderTickerList();
         renderElimGrid();
+        renderStandings();
         saveState();
       }
       let nameDebounce;
@@ -1130,6 +1266,10 @@
       }
       function setRank(index, val) {
         state.teams[index].rank = parseInt(val) || index + 1;
+        saveState();
+      }
+      function setWwcd(index, val) {
+        state.teams[index].wwcd = parseInt(val) || 0;
         saveState();
       }
       function triggerEliminated(index) {
@@ -1159,6 +1299,12 @@
 
       function saveState(mode) {
         try {
+          // Hitung ulang poin sebelum simpan
+          state.teams.forEach((t) => {
+            t.place_pts = getPlacementPts(t.rank);
+            t.kill_pts = t.kills;
+            t.total = t.place_pts + t.kill_pts;
+          });
           localStorage.setItem("pubgm_overlay_state", JSON.stringify(state));
           pushToServer(state);
           if (!sheetsUrl) {

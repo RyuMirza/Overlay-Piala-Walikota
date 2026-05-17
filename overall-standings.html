@@ -1,192 +1,378 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Overall Standings</title>
-    <link rel="stylesheet" href="css/standard.css">
+    <link rel="stylesheet" href="css/standard.css" />
     <style>
-        @font-face {
-            font-family: 'AgencyFB';
-            src: url('fonts/agency_fb.ttf') format('truetype');
-        }
-        body, html {
-            margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden;
-            font-family: 'AgencyFB', sans-serif; color: white; background: transparent;
-        }
+      @font-face {
+        font-family: "AgencyFB";
+        src: url("fonts/agency_fb.ttf") format("truetype");
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        font-family: "AgencyFB", sans-serif;
+        color: white;
+        background: transparent;
+      }
+      #container {
+        width: 1920px;
+        height: 1080px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        background-color: transparent;
+      }
+      #container.show {
+        opacity: 1;
+      }
 
-        #container {
-            width: 1920px; height: 1080px; position: absolute; top: 0; left: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.5s ease-in-out;
-            background-color: transparent;
-        }
-        #container.show { opacity: 1; }
+      .content-wrapper {
+        width: 1650px;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(20px);
+      }
 
-        .content-wrapper {
-            width: 1650px; display: flex; flex-direction: column;
-            transform: translateY(20px);
-        }
+      .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+        transform: translateY(-30px);
+        opacity: 0;
+        transition: all 0.6s ease;
+      }
+      #container.show .header-bar {
+        transform: translateY(0);
+        opacity: 1;
+      }
 
-        /* HEADER */
-        .header-bar {
-            display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 30px;
-            transform: translateY(-30px); opacity: 0; transition: all 0.6s ease;
-        }
-        #container.show .header-bar { transform: translateY(0); opacity: 1; }
+      .title-left {
+        font-size: 80px;
+        font-weight: bold;
+        letter-spacing: 3px;
+        text-shadow: 2px 5px 15px rgba(0, 0, 0, 0.6);
+        line-height: 0.9;
+      }
+      .title-right {
+        display: flex;
+        align-items: flex-end;
+        gap: 15px;
+      }
+      .title-right-text {
+        font-size: 28px;
+        text-transform: uppercase;
+        text-align: right;
+        line-height: 1.1;
+        padding-bottom: 10px;
+        color: #e0e0e0;
+        font-weight: bold;
+      }
+      .title-right-number {
+        font-size: 90px;
+        font-weight: bold;
+        line-height: 0.75;
+        text-shadow: 2px 5px 15px rgba(0, 0, 0, 0.6);
+      }
 
-        .title-left {
-            font-size: 80px; font-weight: bold; letter-spacing: 3px;
-            text-shadow: 2px 5px 15px rgba(0,0,0,0.6);
-            line-height: 0.9;
-        }
-        .title-right {
-            display: flex; align-items: flex-end; gap: 15px;
-        }
-        .title-right-text {
-            font-size: 28px; text-transform: uppercase; text-align: right; line-height: 1.1;
-            padding-bottom: 10px; color: #e0e0e0; font-weight: bold;
-        }
-        .title-right-number {
-            font-size: 90px; font-weight: bold; line-height: 0.75;
-            text-shadow: 2px 5px 15px rgba(0,0,0,0.6);
-        }
+      .table-headers {
+        display: flex;
+        font-size: 38px;
+        font-weight: bold;
+        padding: 0 10px 15px 10px;
+        color: #d1d9e6;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transform: translateX(-50px);
+        opacity: 0;
+        transition: all 0.6s ease;
+      }
+      #container.show .table-headers {
+        transform: translateX(0);
+        opacity: 1;
+        transition-delay: 0.1s;
+      }
 
-        /* TABLE HEADERS */
-        .table-headers {
-            display: flex; font-size: 38px; font-weight: bold; padding: 0 10px 15px 10px;
-            color: #d1d9e6; text-transform: uppercase; letter-spacing: 1px;
-            transform: translateX(-50px); opacity: 0; transition: all 0.6s ease;
-        }
-        #container.show .table-headers { transform: translateX(0); opacity: 1; transition-delay: 0.1s; }
+      .col-rank {
+        width: 8%;
+        text-align: center;
+      }
+      .col-team {
+        width: 42%;
+        padding-left: 20px;
+      }
+      .col-wwcd {
+        width: 10%;
+        text-align: center;
+      }
+      .col-place {
+        width: 10%;
+        text-align: center;
+      }
+      .col-kill {
+        width: 10%;
+        text-align: center;
+      }
+      .col-total {
+        width: 10%;
+        text-align: center;
+      }
+      .col-pts {
+        width: 10%;
+        text-align: center;
+      }
 
-        /* COLUMNS */
-        .col-rank { width: 8%; text-align: center; }
-        .col-team { width: 52%; padding-left: 20px; }
-        .col-wwcd { width: 10%; text-align: center; }
-        .col-place { width: 10%; text-align: center; }
-        .col-kill { width: 10%; text-align: center; }
-        .col-total { width: 10%; text-align: center; }
+      .team-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .team-row {
+        display: flex;
+        align-items: center;
+        font-size: 42px;
+        font-weight: bold;
+        padding: 12px 10px;
+        background: linear-gradient(
+          90deg,
+          #1b315c 0%,
+          #29487d 50%,
+          #1b315c 100%
+        );
+        border: 2px solid #5a7cae;
+        border-radius: 8px;
+        box-shadow:
+          0 8px 20px rgba(0, 0, 0, 0.5),
+          inset 0 2px 5px rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      #container.show .team-row {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .team-row > div {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .team-row .col-team {
+        justify-content: flex-start;
+      }
+      .team-row .col-rank {
+        font-size: 38px;
+        color: #e0e0e0;
+      }
 
-        /* ROWS */
-        .team-list { display: flex; flex-direction: column; gap: 14px; }
-        
-        .team-row {
-            display: flex; align-items: center; font-size: 42px; font-weight: bold; padding: 12px 10px;
-            background: linear-gradient(90deg, #1b315c 0%, #29487d 50%, #1b315c 100%);
-            border: 2px solid #5a7cae; border-radius: 8px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 2px 5px rgba(255,255,255,0.2);
-            opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        #container.show .team-row { opacity: 1; transform: translateY(0); }
+      .col-wwcd::before,
+      .col-place::before,
+      .col-kill::before,
+      .col-total::before,
+      .col-pts::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 15%;
+        height: 70%;
+        width: 2px;
+        background-color: #a4bde0;
+        opacity: 0.6;
+      }
+      .table-headers .col-wwcd::before,
+      .table-headers .col-place::before,
+      .table-headers .col-kill::before,
+      .table-headers .col-total::before,
+      .table-headers .col-pts::before {
+        display: none;
+      }
 
-        .team-row > div { position: relative; display: flex; align-items: center; justify-content: center;}
-        .team-row .col-team { justify-content: flex-start; }
-        .team-row .col-rank { font-size: 38px; color: #e0e0e0; }
+      .team-logo {
+        width: 55px;
+        height: 55px;
+        object-fit: contain;
+        margin-right: 20px;
+      }
+      .team-name-text {
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: 1px;
+      }
 
-        /* Vertical separators */
-        .col-wwcd::before, .col-place::before, .col-kill::before, .col-total::before {
-            content: ''; position: absolute; left: 0; top: 15%; height: 70%; width: 2px;
-            background-color: #a4bde0; opacity: 0.6;
-        }
-
-        /* Hide separators for headers */
-        .table-headers .col-wwcd::before, .table-headers .col-place::before, 
-        .table-headers .col-kill::before, .table-headers .col-total::before { display: none; }
-
-        .team-logo { width: 55px; height: 55px; object-fit: contain; margin-right: 20px; }
-        .team-name-text { text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 1px;}
-
-        /* Staggered Animations for 8 teams */
-        .team-list .team-row:nth-child(1) { transition-delay: 0.2s; background: linear-gradient(90deg, #4b4115 0%, #8b7527 50%, #4b4115 100%); border-color: #ffd700; } /* 1st Gold */
-        .team-list .team-row:nth-child(2) { transition-delay: 0.25s; }
-        .team-list .team-row:nth-child(3) { transition-delay: 0.3s; }
-        .team-list .team-row:nth-child(4) { transition-delay: 0.35s; }
-        .team-list .team-row:nth-child(5) { transition-delay: 0.4s; }
-        .team-list .team-row:nth-child(6) { transition-delay: 0.45s; }
-        .team-list .team-row:nth-child(7) { transition-delay: 0.5s; }
-        .team-list .team-row:nth-child(8) { transition-delay: 0.55s; }
-
+      /* Gold for 1st */
+      .team-list .team-row:nth-child(1) {
+        transition-delay: 0.2s;
+        background: linear-gradient(
+          90deg,
+          #4b4115 0%,
+          #8b7527 50%,
+          #4b4115 100%
+        );
+        border-color: #ffd700;
+      }
+      .team-list .team-row:nth-child(2) {
+        transition-delay: 0.25s;
+      }
+      .team-list .team-row:nth-child(3) {
+        transition-delay: 0.3s;
+      }
+      .team-list .team-row:nth-child(4) {
+        transition-delay: 0.35s;
+      }
+      .team-list .team-row:nth-child(5) {
+        transition-delay: 0.4s;
+      }
+      .team-list .team-row:nth-child(6) {
+        transition-delay: 0.45s;
+      }
+      .team-list .team-row:nth-child(7) {
+        transition-delay: 0.5s;
+      }
+      .team-list .team-row:nth-child(8) {
+        transition-delay: 0.55s;
+      }
     </style>
-</head>
-<body>
-
-<div id="container">
-    <div class="content-wrapper">
+  </head>
+  <body>
+    <div id="container">
+      <div class="content-wrapper">
         <div class="header-bar">
-            <div class="title-left" id="f_overall_title">OVERALL STANDINGS</div>
-            <div class="title-right">
-                <div class="title-right-text">POST<br>MATCH</div>
-                <div class="title-right-number" id="f_post_match">4</div>
-            </div>
+          <div class="title-left" id="f_overall_title">OVERALL STANDINGS</div>
+          <div class="title-right">
+            <div class="title-right-text">POST<br />MATCH</div>
+            <div class="title-right-number" id="f_post_match">—</div>
+          </div>
         </div>
-        
         <div class="table-headers">
-            <div class="col-rank">#</div>
-            <div class="col-team">TEAM NAME</div>
-            <div class="col-wwcd">WWCD</div>
-            <div class="col-place">PLACE</div>
-            <div class="col-kill">KILL</div>
-            <div class="col-total">TOTAL</div>
+          <div class="col-rank">#</div>
+          <div class="col-team">TEAM NAME</div>
+          <div class="col-wwcd">WWCD</div>
+          <div class="col-place">PLACE PTS</div>
+          <div class="col-kill">KILLS</div>
+          <div class="col-pts">KILL PTS</div>
+          <div class="col-total">TOTAL</div>
         </div>
-
-        <div class="team-list" id="team-list">
-            <!-- 8 Rows injected by JS for perfect 1080p fit -->
-        </div>
+        <div class="team-list" id="team-list"></div>
+      </div>
     </div>
-</div>
 
-<script>
-    function generateRows() {
-        const list = document.getElementById('team-list');
-        list.innerHTML = '';
+    <script>
+      const PLACEMENT_PTS = [12, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+      function getPlacementPts(rank) {
+        if (rank >= 1 && rank <= 10) return PLACEMENT_PTS[rank - 1];
+        return 0;
+      }
+
+      function generateRows() {
+        const list = document.getElementById("team-list");
+        list.innerHTML = "";
         for (let i = 1; i <= 8; i++) {
-            list.innerHTML += `
+          list.innerHTML += `
                 <div class="team-row">
                     <div class="col-rank" id="f_rank_${i}">#${i}</div>
                     <div class="col-team">
                         <img class="team-logo" src="team_logos/placeholder.png" onerror="this.style.display='none'">
                         <span class="team-name-text" id="f_team_${i}">Team ${i}</span>
                     </div>
-                    <div class="col-wwcd" id="f_wwcd_${i}">0</div>
+                    <div class="col-wwcd"  id="f_wwcd_${i}">0</div>
                     <div class="col-place" id="f_place_${i}">0</div>
-                    <div class="col-kill" id="f_kill_${i}">0</div>
+                    <div class="col-kill"  id="f_kill_${i}">0</div>
+                    <div class="col-pts"   id="f_pts_${i}">0</div>
                     <div class="col-total" id="f_total_${i}">0</div>
                 </div>
             `;
         }
-    }
+      }
 
-    function play() { document.getElementById('container').classList.add('show'); }
-    function stop() { document.getElementById('container').classList.remove('show'); }
+      function play() {
+        document.getElementById("container").classList.add("show");
+      }
+      function stop() {
+        document.getElementById("container").classList.remove("show");
+      }
 
-    function update(str) {
+      function update(str) {
         try {
-            var data = typeof str === 'string' ? JSON.parse(str) : str;
-            for (var key in data) {
-                var val = data[key];
-                if (val && typeof val === 'object' && val.v !== undefined) { val = val.v; }
-                var el = document.getElementById(key);
-                if (el) { el.innerHTML = val; }
-            }
-        } catch (e) { console.error("Update Error: ", e); }
-    }
+          var data = typeof str === "string" ? JSON.parse(str) : str;
+          for (var key in data) {
+            var val = data[key];
+            if (val && typeof val === "object" && val.v !== undefined)
+              val = val.v;
+            var el = document.getElementById(key);
+            if (el) el.innerHTML = val;
+          }
+        } catch (e) {
+          console.error("Update Error:", e);
+        }
+      }
 
-    generateRows();
-    
-    // Auto-play
-    let dummyData = {
-        "f_overall_title": "OVERALL STANDINGS",
-        "f_post_match": "4"
-    };
-    for (let i = 1; i <= 8; i++) {
-        dummyData[`f_team_${i}`] = `TEAM ${i}`;
-        dummyData[`f_wwcd_${i}`] = Math.floor(Math.random() * 2);
-        dummyData[`f_place_${i}`] = Math.floor(Math.random() * 20) + 5;
-        dummyData[`f_kill_${i}`] = Math.floor(Math.random() * 40) + 10;
-        dummyData[`f_total_${i}`] = dummyData[`f_place_${i}`] + dummyData[`f_kill_${i}`];
-    }
-    setTimeout(() => { update(dummyData); play(); }, 500);
-</script>
-</body>
+      function processState(state) {
+        if (!state || !state.teams) return;
+
+        // Sort by total desc, tiebreak: wwcd desc, then kill_pts desc
+        const sorted = state.teams
+          .filter((t) => t.status !== "MISS")
+          .map((t) => {
+            const place_pts =
+              t.place_pts !== undefined ? t.place_pts : getPlacementPts(t.rank);
+            const kill_pts = t.kill_pts !== undefined ? t.kill_pts : t.kills;
+            const total =
+              t.total !== undefined ? t.total : place_pts + kill_pts;
+            return { ...t, place_pts, kill_pts, total };
+          })
+          .sort(
+            (a, b) =>
+              b.total - a.total ||
+              (b.wwcd || 0) - (a.wwcd || 0) ||
+              b.kill_pts - a.kill_pts,
+          )
+          .slice(0, 8);
+
+        let newData = {};
+        sorted.forEach((t, i) => {
+          const pos = i + 1;
+          newData[`f_rank_${pos}`] = `#${pos}`;
+          newData[`f_team_${pos}`] = t.name;
+          newData[`f_wwcd_${pos}`] = t.wwcd || 0;
+          newData[`f_place_${pos}`] = t.place_pts;
+          newData[`f_kill_${pos}`] = t.kills;
+          newData[`f_pts_${pos}`] = t.kill_pts;
+          newData[`f_total_${pos}`] = t.total;
+        });
+        update(newData);
+      }
+
+      generateRows();
+      setTimeout(() => play(), 500);
+
+      // Load initial state
+      fetch("http://localhost:3000/api/state")
+        .then((r) => r.json())
+        .then((state) => processState(state))
+        .catch((e) => {});
+
+      // Listen real-time
+      const evtSource = new EventSource("http://localhost:3000/api/stream");
+      evtSource.onmessage = (event) => {
+        try {
+          processState(JSON.parse(event.data));
+        } catch (e) {}
+      };
+    </script>
+  </body>
 </html>
